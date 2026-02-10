@@ -1,0 +1,53 @@
+---
+title: "Demo 09: ARMA and GARCH Simulation"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tseries)
+library(fGarch)
+library(TSA)
+```
+
+#1.Generate data points
+```{r 1.}
+rt = numeric(200)
+at = numeric(200)
+sigma2 = numeric(200) ; sigma2[1] = 1;sigma2[2] = 1
+eps = rnorm(200,0,1)
+
+for(i in c(3:200)){
+  sigma2[i] = 0.01+0.12*at[i-1]^2+0.09*sigma2[i-1]
+  at[i] = sigma2[i]^0.5*eps[i]
+  rt[i] = 0.01+0.03*rt[i-1]-0.03*rt[i-2]+at[i]
+}
+  
+ts.plot(rt)
+```
+
+#2.ACF graphs of three sequences
+
+```{r 2.}
+aracf = acf(rt,type = "correlation",plot = T)
+aracf = acf(rt^2,type = "correlation",plot = T)
+aracf = acf(abs(rt),type = "correlation",plot = T)
+```
+
+#3. Find ARMA(p,q), result is (0,0)
+
+```{r 3.}
+eacf(rt)
+```
+
+#4. Fit GARCH
+```{r 4.}
+gmodel = garchFit(formula = ~ garch(1, 1),data = rt)
+```
+
+#5. Forecasting rt
+```{r 5.}
+predict(gmodel,n.ahead = 200)
+```
+
+

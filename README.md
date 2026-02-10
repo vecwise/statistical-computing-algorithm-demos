@@ -1,34 +1,16 @@
-# Queue Simulation Projects in R
+# Statistical Computing Algorithm Demos
 
-This repository presents two simulation-based studies related to single-server queues, with a focus on stochastic modeling, statistical estimation, and variance reduction.
+## Algorithm-Focused Demos (No External Data Upload Needed)
 
-## 📁 Projects Overview
+These demos are extracted from `src_data` and emphasize simulation, MCMC, Bayesian computation, and time-series algorithms without depending on external uploaded datasets.
 
-### [1. Arrival Cutoff with Bootstrap Estimation](./arrival-cutoff-bootstrap-sim/)
-We simulate a queue with a **Poisson arrival process** (rate $\lambda = 4.0$) and **exponentially distributed service times** (rate $\mu = 4.2$). Admission is limited to at most 3 people in the system, and arrivals are cut off at $T = 8$. We estimate the **average system time per admitted customer** and use **bootstrap resampling** to assess the estimator's **mean squared error (MSE)**.
-
-Mathematical Objective:
-
-$$
-\theta = \mathbb{E}[\text{Time in system per admitted customer}]
-$$
-
----
-
-### [2. Variance Reduction in M/M/1 Queue](./queue-var-reduction-sim/)
-We simulate an M/M/1 queue with **inter-arrival rate $\lambda = 2$ per minute** and **service time with mean 1 minute**. The goal is to estimate:
-
-$$
-\theta = \mathbb{E}\left[\sum_{i=1}^{10} T_i\right]
-$$
-
-where $T_i$ is the time customer $i$ spends in the system. We compare:
-
-- Naive estimator
-- Antithetic variables
-- Control variates (service/interarrival time)
-- Conditional expectations
-
-Each project includes source code and rendered output in HTML.
-
----
+1. [demo-01-mm1-cutoff-bootstrap](./demo-01-mm1-cutoff-bootstrap/)
+2. [demo-02-mm1-variance-reduction](./demo-02-mm1-variance-reduction/)
+3. [demo-03-rare-event-importance-sampling](./demo-03-rare-event-importance-sampling/)
+4. [demo-04-nhpp-gaussian-copula](./demo-04-nhpp-gaussian-copula/)
+5. [demo-05-constrained-uniform-mcmc](./demo-05-constrained-uniform-mcmc/)
+6. [demo-06-random-variate-generation](./demo-06-random-variate-generation/)
+7. [demo-07-bayes-poisson-trend-grid](./demo-07-bayes-poisson-trend-grid/)
+8. [demo-08-bayes-hierarchical-grid-posterior](./demo-08-bayes-hierarchical-grid-posterior/)
+9. [demo-09-ts-arma-garch-simulation](./demo-09-ts-arma-garch-simulation/)
+10. [demo-10-ts-brownian-passage-prob](./demo-10-ts-brownian-passage-prob/)

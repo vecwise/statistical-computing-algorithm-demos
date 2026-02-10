@@ -1,0 +1,32 @@
+---
+title: "Demo 10: Brownian First-Passage Probability"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Q1,Q2,Q3 answer together
+```{r}
+BMsimu <- function(simutimes,divide,thereshold){ #Simulate BM 0~1
+  count = 0
+  for(i in c(1:simutimes)){
+    step = rnorm(divide,0,(1/divide)^0.5)
+    W = cumsum(step)
+    if(min(W)<thereshold){
+      count = count+1
+      next
+    }
+  }
+  plot(W)
+  return(count/simutimes)
+}
+
+BMsimu(10000,100,-3)
+BMsimu(10000,10000,-3)
+```
+
+If I divide [0,1] into only 1 part, P(min(W(t))<-3) = 0.00134, and once dividing it into 100 parts, I get P nearly =  0.25.
+
+Hence, from 1 to 100 to 10000 to continuous, P(min(W(t))<-3) will become larger and more approximately to real probability.
+
+

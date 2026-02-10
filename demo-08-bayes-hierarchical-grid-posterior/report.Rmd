@@ -1,0 +1,232 @@
+---
+title: "Demo 08: Bayesian Hierarchical Grid Posterior"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+data = matrix(c(1.47,0.25,1.75,5.58,0.66,0.61,5.59,0.54,3.7,8.42,0.81,0.05,0.95,1.21,2.24,2.03,0.25,2.82,2.71,0.62),2,10)
+y1 = c(0.028,-0.741,-0.541,-0.246,0.069,-0.584,-0.512,-0.079,-0.424,-0.335,-0.213,-0.039,-0.593,0.282,-0.321,-0.135,0.141,0.322,0.444,-0.218,-0.591,-0.608)
+sigma1 = c(0.85,0.483,0.565,0.138,0.281,0.676,0.139,0.204,0.274,0.117,0.195,0.229,0.425,0.205,0.298,0.261,0.364,0.553,0.717,0.26,0.257,0.272)
+data1 = data.frame(y1,sigma1)
+```
+
+#1.(a)
+Plot posterior density of tau
+```{r}
+ptau = function(tau){
+  uhat = 0
+  for (j in c(1:22)){
+    uhat = uhat+y1[j]/(sigma1[j]^2+tau^2)
+  }
+  uhat = uhat/sum(1/(sigma1^2+tau^2))
+  value = sum(1/(sigma1^2+tau^2))^(-0.5)
+  for(j in c(1:22)){
+    value = value*(sigma1[j]^2+tau^2)^(-0.5)*exp((-0.5)/(sigma1[j]^2+tau^2)*(y1[j]-uhat)^2)
+  }
+  return(value)
+}
+
+tt = seq(0, 7.5, length.out = 1000)
+tp = ptau(tt)
+tp = tp/sum(tp)
+
+df_margpost = data.frame(x = (tt), p = (tp))
+title1 = 'Marginal posterior p(tau | y)'
+plot_margpost <-
+  ggplot(data = df_margpost) +
+  geom_line(aes(x = x, y = p), color='forestgreen') +
+  labs(x = expression(tau), y = 'p(tau | y)', title = title1) +
+  scale_y_continuous(breaks = 0) +
+  xlim(c(0, 1))
+
+plot_margpost
+```
+#1.(b)
+Display how posterior means and sds of thetaj depend on tau.
+```{r}
+#先生pdf
+pthundertau = function(theta,tau,j){
+  step = 0.05 #積分u時的密度
+  uindicator = seq(-30,30,step)
+  vj = 1/(1/sigma1[j]^2+1/tau^2)
+  uhat = 0
+  for (i in c(1:22)){
+    uhat = uhat+y1[i]/(sigma1[i]^2+tau^2)
+  }
+  uhat = uhat/sum(1/(sigma1^2+tau^2))
+  vu = sum(1/(sigma1^2+tau^2))^(-1)
+  ppp = 0
+  for(uu in uindicator){
+    thetajhat = (1/sigma1[j]^2*y1[j]+1/tau^2*uu)/(1/sigma1[j]^2+1/tau^2)
+    ppp = ppp+1/2/pi/vj/vu*exp(-(theta-thetajhat)^2/vj^2/2)*exp(-(uu-uhat)^2/vu^2/2)  
+  }
+  ppp = ppp*step
+  return(ppp)
+}
+
+#計算期望值
+Eandsd = function(taus,j){
+  thetas = seq(-5,5,0.05)
+  ppp = pthundertau(thetas,taus,j)
+  ppp = ppp/sum(ppp)
+  #print(mean(ppp))
+  #plot(thetas,ppp)
+  ss = sample(x=thetas,1000,replace = T,prob = ppp)
+  x = c(mean(ss),sd(ss))
+  return(x)
+}
+
+taus = seq(0.1,20,0.05)
+eth = matrix(0,length(taus),22)
+sdth = matrix(0,length(taus),22)
+for (group in c(1:22)) {
+  for(i in c(1:length(taus))){
+    info = Eandsd(taus[i],group)
+    eth[i,group] = info[1]
+    sdth[i,group] = info[2]
+  }
+  #plot(taus,eth)
+}
+colnames(eth) = c(1:22)
+colnames(sdth) = c(1:22)
+```
+
+E(theta|tau,y)
+```{r}
+df_eth_final = data.frame(taus,eth)
+p1<-ggplot(df_eth_final, aes(x=taus)) + 
+  geom_point(aes(y=X1)) + geom_line(aes(y=X1 , color="cyan")) +
+  geom_point(aes(y=X2)) + geom_line(aes(y=X2, color="red"))+
+  geom_point(aes(y=X3)) + geom_line(aes(y=X1 , color="yellow")) +
+  geom_point(aes(y=X4)) + geom_line(aes(y=X1 , color="black")) +
+  geom_point(aes(y=X5)) + geom_line(aes(y=X1 , color="blue")) +
+  geom_point(aes(y=X6)) + geom_line(aes(y=X1 , color="orange"))
+p1
+
+```
+
+sd(theta|tau,y)
+```{r}
+df_sdth_final = data.frame(taus,sdth)
+p2<-ggplot(df_sdth_final, aes(x=taus)) + 
+  geom_point(aes(y=X1)) + geom_line(aes(y=X1 , color="cyan")) +
+  geom_point(aes(y=X2)) + geom_line(aes(y=X2, color="red"))+
+  geom_point(aes(y=X3)) + geom_line(aes(y=X1 , color="yellow")) +
+  geom_point(aes(y=X4)) + geom_line(aes(y=X1 , color="black")) +
+  geom_point(aes(y=X5)) + geom_line(aes(y=X1 , color="blue")) +
+  geom_point(aes(y=X6)) + geom_line(aes(y=X1 , color="orange"))
+p2
+```
+
+# 2.(c)(d)
+Plot P(alpha,beta|Y),and summarize parameters
+
+```{r}
+margipos = function(a,b){
+  value = (a*b^a)^10*b^(-2.5)
+  for (i in c(1:10)){
+    value = value/(data[1,i]+data[2,i]+b)^(a+1)
+  }
+  return(value)
+}
+
+posghyper = function(theta,a,b,j){
+  bb = (data[1,j]+data[2,j]+b)
+  value = bb^(a+1)/gamma(a+1)*theta^(-a-2)*exp(-bb/theta)*b^(-2.5)
+  return(value)
+}
+
+A <- seq(0.1, 6, length.out = 50)
+B <- seq(0.1, 33, length.out = 50)
+theta = seq(0.1, 10, length.out = 50)
+
+cA <- rep(A, each = length(B))
+cB <- rep(B, length(A))
+ctheta = rep(theta, each = length(A)*length(B))
+cA = rep(cA, length(B))
+cB = rep(cB, length(A))
+
+#Step 1 做p(alpha,beta|Y)
+mp = mapply(margipos, cA, cB)
+mp = mp/sum(mp)
+
+#Step 2 做conditional posterior 並和(c)的結果相乘得到joint posterior
+th = matrix(0,length(A)*length(B)*length(theta),10)
+colnames(th) = c("ptheta1","ptheta2","ptheta3","ptheta4","ptheta5"
+                 ,"ptheta6","ptheta7","ptheta8","ptheta9","ptheta10")
+#這邊的ptheta是p(theta|alpha,beta,y)
+
+for(i in c(1:10)){
+  pth = mapply(posghyper, ctheta, cA, cB, i)
+  pth = pth*mp
+  pth = pth/sum(pth)
+  th[,i] = pth
+}
+```
+Plot P(alpha,beta|Y)
+```{r}
+df_marg = data.frame(x = cA, y = cB, theta = ctheta, mp = mp, th)
+ggplot(data = df_marg, aes(x = x, y = y)) +
+  geom_raster(aes(fill = mp, alpha = mp), interpolate = T) +
+  geom_contour(aes(z = mp), colour = 'black', size = 0.2) +
+  coord_cartesian(xlim = c(0,3), ylim = c(0, 10)) +
+  labs(x = "Alpha", y = "Beta", title = "Marginal of alpha,beta") +
+  scale_fill_gradient(low = 'yellow', high = 'red', guide = F) +
+  scale_alpha(range = c(0, 1), guide = F)
+```
+Sample from distribution and summzrize.
+```{r}
+#Sample from distribution
+pthetamarginal = matrix(0,length(B),10) #p(theta|y)
+colnames(pthetamarginal) = c("ptheta1","ptheta2","ptheta3","ptheta4","ptheta5"
+                 ,"ptheta6","ptheta7","ptheta8","ptheta9","ptheta10")
+for(j in c(1:10)){
+  for (i in c(1:length(B))) {
+    for(k in c(1:2500)){
+      pthetamarginal[i,j] = pthetamarginal[i,j]+th[(2500*(i-1)+k),j]
+    }
+  }
+}
+
+summary_dist = function(i){
+  x = sample(x=theta,1000,replace = T,prob = pthetamarginal[,i])
+  return(c(mean(x),median(x),sd(x),quantile(x, probs = c(0.05,0.95))))
+}
+
+summary_pos = matrix(0,12,5)
+colnames(summary_pos) = c("mean","median","sd","5%","95%")
+for(i in c(1:10)){
+  summary_pos[i+2,] = summary_dist(i)
+}
+summary_pos
+```
+## 2.(e)
+Plot thetaj-y
+```{r}
+x = colSums(data)/2
+y = summary_pos[3:12,1]
+lowerb = summary_pos[3:12,4]
+upperb = summary_pos[3:12,5]
+e_plot = data.frame(x,y,lowerb,upperb)
+plot(x,y)
+
+ggplot(e_plot, aes(x=x, y=y)) + 
+  geom_errorbar(aes(ymin=lowerb, ymax=upperb), colour="blue", width=.1) +
+  xlab("yjbar") +
+  ylab("thetaj") +
+  geom_point(shape=1)+
+  scale_colour_hue(name="Supplement type",   
+                   breaks=c("OJ", "VC"),
+                   labels=c("Orange juice", "Ascorbic acid"),
+                   l=40) +                    
+  ggtitle("Posterior ") +
+  expand_limits(y=0) +                        
+  scale_y_continuous(breaks=0:20*4) +       
+  theme_bw() +
+  theme(legend.justification=c(1,0),
+        legend.position=c(1,0))               
+```
+
+

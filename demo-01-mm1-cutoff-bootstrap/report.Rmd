@@ -1,0 +1,71 @@
+---
+title: "Demo 01: M/M/1 Cutoff Queue with Bootstrap"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1.M/M/1 simulation
+a.隊列<=3人時新人才會願意來排
+b.統計截止至T = 8之前
+c.進入時間~exp(4.0), 服務時間~exp(4.2)
+
+計算每人平均從進來到服務完離開需要多少時間
+```{r}
+MM1 = function(lambdain,lambdaout,T,qthereshold){ #return幾號人等了多久
+  #Parameter setting-----------------------------------------
+  n = floor(T*lambdain*3.5) #取平均數的3.5倍，避免太少
+  arrive_interval = rexp(n,lambdain)
+  arrive_time = cumsum(arrive_interval)
+  service_time = rexp(n,lambdaout)
+  #Initiallization-----------------------------------------
+  queue = numeric()
+  leave_time = numeric(n)
+  leave_t_now = arrive_time[1]+service_time[1]
+  leave_time[1] = leave_t_now
+  leave_t_last = 0
+  nextserve = 1
+  #Start Simulation-----------------------------------------
+  while (arrive_time[nextserve]<=T) { #t = T之後就不給進來了
+    #處理排隊的人
+    queue = append(queue,which(arrive_time<leave_t_now & arrive_time>leave_t_last))
+    queue = queue[which(queue>nextserve)]
+    if(length(queue)>qthereshold) {queue = queue[1:qthereshold]} #queue 隊伍<=人才來
+
+    #處理離開時間
+    leave_t_last = leave_t_now
+    if(length(queue)>0){
+      nextserve = queue[1]
+      leave_t_now = leave_t_now+service_time[nextserve]
+      leave_time[nextserve] = leave_t_now
+      queue = queue[-1]
+    }else{
+      nextserve = min(which(arrive_time>=leave_t_now)) 
+      leave_t_now = leave_t_now+arrive_interval[nextserve]+service_time[nextserve]
+      leave_time[nextserve] = leave_t_now
+    }
+  }
+  total_wait_time = leave_time-arrive_time
+  total_wait_time = total_wait_time[which(leave_time!=0)]
+  return(total_wait_time) #所求每人的等待時間
+}
+
+data = MM1(4.0,4.2,8,3) #thereshold好像要改成+1
+mean(data)
+```
+
+## 2.用Bootstrap算出此estimator的MSE
+```{r}
+B = 1000
+bootstrap_data = numeric(B)
+for(i in c(1:B)){
+  bootstrap_data[i] = mean(sample(data,length(data),replace = TRUE))
+}
+MSE = var(bootstrap_data) 
+MSE
+```
+
+
+

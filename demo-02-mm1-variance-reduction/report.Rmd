@@ -1,0 +1,140 @@
+---
+title: "Demo 02: Variance Reduction in M/M/1 Queue"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setting MM1 function
+return: 1.total waiting time, 2.total E(T|N)
+```{r}
+MM1n = function(lambdain,lambdaout,n,U1,U2){
+  #Parameter setting-----------------------------------------
+  arrive_interval = -1/lambdain*log(U1)
+  service_time = -1/lambdaout*log(U2)
+  #arrive_interval = rexp(n,lambdain)
+  #service_time = rexp(n,lambdaout)
+  arrive_time = cumsum(arrive_interval)
+  #Initiallization-----------------------------------------
+  queue = numeric()
+  leave_time = numeric(n)
+  how_many_towait = numeric(n)
+  leave_t_now = arrive_time[1]+service_time[1]
+  leave_time[1] = leave_t_now
+  leave_t_last = 0
+  nowserve = 1
+  #Start Simulation-----------------------------------------
+  while (nowserve<n) { #只算到n個人
+    #處理排隊的人
+    queue = append(queue,which(arrive_time<leave_t_now & arrive_time>leave_t_last))
+    queue = queue[which(queue>nowserve)]
+    how_many_towait[nowserve+1] = length(queue)
+    #處理離開時間
+    leave_t_last = leave_t_now
+    if(length(queue)>0){
+      nowserve = queue[1]
+      leave_t_now = leave_t_now+service_time[nowserve]
+      leave_time[nowserve] = leave_t_now
+      queue = queue[-1]
+      #print(nowserve)
+    }else{
+      nowserve = nowserve+1
+      leave_t_now = leave_t_now+arrive_interval[nowserve]+service_time[nowserve]
+      leave_time[nowserve] = leave_t_now
+    }
+  }
+  total_wait_time = leave_time-arrive_time
+  total_wait_time = total_wait_time[which(leave_time!=0)]
+  ETunderN = (how_many_towait+1)*1/lambdaout
+  return(c(sum(total_wait_time),sum(ETunderN)))#所求每人等待時間總和,期望等待時間given n
+}
+```
+
+#a.Purely estimate
+```{r}
+n = 10
+q1 = numeric(100)
+for (i in c(1:100)){
+  U1 = runif(n)
+  U2 = runif(n)
+  q1[i] = MM1n(2,1,n,U1,U2)[1]
+}
+var(q1)
+mean(q1)
+```
+
+#b.antithetic variables
+```{r}
+n = 10
+q2 = numeric(100)
+q2_auth = numeric(100)
+for (i in c(1:100)){
+  U1 = runif(n)
+  U2 = runif(n)
+  q2[i] = MM1n(2,1,n,U1,U2)[1]
+  q2_auth[i] = MM1n(2,1,n,1-U1,1-U2)[1]
+}
+var((q2+q2_auth)/2)
+mean((q2+q2_auth)/2)
+var((q2+q2_auth)/2)/var(q1)
+```
+
+#c.Control variate
+```{r}
+n = 10
+q3X = numeric(100)
+q3Y = numeric(100)
+for (i in c(1:100)){
+  U1 = runif(n)
+  U2 = runif(n)
+  q3X[i] = MM1n(2,1,n,U1,U2)[1]
+  q3Y[i] = sum(-log(U2))
+}
+
+uy = 10
+c = -cov(q3X,q3Y)/var(q3Y)
+var(q3X+c*(q3Y-uy))
+mean(q3X+c*(q3Y-uy))
+var(q3X+c*(q3Y-uy))/var(q1)
+```
+
+#d.Another control variate
+```{r}
+n = 10
+q4X = numeric(100)
+q4Y = numeric(100)
+for (i in c(1:100)){
+  U1 = runif(n)
+  U2 = runif(n)
+  q4X[i] = MM1n(2,1,n,U1,U2)[1]
+  q4Y[i] = sum(-log(U2)) - sum(-1/2*log(U1)[2:10])
+}
+
+uy = 10-9/2
+c = -cov(q4X,q4Y)/var(q4Y)
+var(q4X+c*(q4Y-uy))
+mean(q4X+c*(q4Y-uy))
+var(q4X+c*(q4Y-uy))/var(q1)
+```
+
+#e.Using sum(E[Ti|Ni])
+Note:E[Ti|Ni] = (Ni+1)u
+```{r}
+n = 10
+q5X = numeric(100)
+for (i in c(1:100)){
+  U1 = runif(n)
+  U2 = runif(n)
+  q5X[i] = MM1n(2,1,n,U1,U2)[2]
+}
+var(q5X)
+mean(q5X)
+var(q5X)/var(q1)
+```
+
+#Summary
+The 4 methods can reduce about 75% of estimating variance, and almost peformed equally well.
+
+

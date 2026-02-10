@@ -1,0 +1,52 @@
+---
+title: "Demo 05: Constrained Uniform MCMC"
+author: "Statistical Computing Demo"
+date: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#1.Generate 9 uniform points on (0,1) conditional on the event that no two of them are within 0.1 of each other.
+
+
+Algorithm is below:  
+(a).Set legal initial vector $x_0$, $x_0 \in (0,1)^9$
+\begin{equation}
+  f(x) \propto 1_{\vert min(x_i-x_j)\vert>0.1,i \ne j}(x)  
+\end{equation}  
+
+(b).Set a random int rumber I from $0~9$
+
+(c).Sample a number $y$ from $U(0,1)$
+
+(d).iterating:  
+If distance of $y$ and other $x's$ are all larger than 0.1, set $x_I$ = $y$.
+If not legal, go back to (c).
+
+(e).Go to (b), for 10000 times
+
+(f).$x$ is what we want.
+
+```{r}
+X = seq(from=0.01,to=0.89,by=0.11)
+failtimes = rep(0,1000)
+for (i in 1:1000){
+  I = floor(9*runif(1)) + 1
+  y = runif(1)
+  X[I] = y
+  delta = abs(y-X)
+  while(sum(delta>=0.1)!=8){
+    y = runif(1)
+    X[I] = y
+    delta = abs(y-X)
+    failtimes[i] = failtimes[i] + 1
+  }
+}
+cat("One sample is", sort(X))
+cat("Mean of failtimes is", mean(failtimes))
+```
+
+

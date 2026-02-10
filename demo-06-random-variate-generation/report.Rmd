@@ -1,0 +1,116 @@
+---
+title: "Demo 06: Random Variate Generation"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Question 1
+
+#### Inverse Transform Method
+
+$F(x)=\frac{1}{2}(x+x^2),0\leq x \leq1$
+
+Let $u=\frac{1}{2}(x+x^2)$ then $x$
+
+```{r inverse}
+f1<-function(x) (0.5*(-1+sqrt(8*x+1)))
+U<-runif(100000,0,1)
+dist1<-f1(U)
+hist(dist1,probability = T,breaks = 1000)
+```
+
+```{r AR}
+save1=as.numeric()
+for (i in 1 :100000000){
+  U1<-runif(1,0,1)
+  U2<-runif(1,0,1)
+  Y1=(1/3)+(2/3)*U1
+  if (U2<=Y1) {save1[i]=U1}
+  save1<-save1[!is.na(save1)]
+  if (length(save1)==100000) {break}
+}
+hist(save1,probability = T,breaks = 1000)
+```
+
+```{r composition method}
+f2<-function(x) (sqrt(x))
+f3<-function(x) (x)
+save2=as.numeric()
+
+for(i in 1:100000){
+ U3<-runif(1,0,1)
+ U4<-runif(1,0,1)
+  if (U3<0.5) save2[i]=f2(U4)
+  else save2[i]=f3(U4)
+}
+hist(save2,probability = T,breaks = 1000)
+```
+
+## Qeustion 2
+
+```{r}
+fun1 <- function(x) exp(-0.01*x)
+fun2 <- function(x) exp(-x)+2*exp(-2*x)-3*exp(-3*x)
+curve(f1, from = -10, to = 20)
+curve(f2, from = -10, to = 20 ,add=T,col='red')
+```
+
+
+
+
+```{r AR}
+save5=as.numeric()
+for (i in 1:n){
+  U9<-runif(1)
+  U10<-runif(1)
+  if (U9<=fun2(U10)/fun1(U10)) {save5[i]=U10}
+  save5<-save5[!is.na(save5)]
+  if (length(save5)==100000) {break}
+}
+hist(save5,probability = T,breaks = 1000)
+curve(fun2,add=T,col='red')
+```
+
+
+
+
+
+## Question 3
+
+```{r composition method}
+f4<-function(x) (x)
+f5<-function(x) (x^(1/4))
+f6<-function(x) (x^(1/5))
+save3=as.numeric()
+
+for(i in 1:100000){
+ U5<-runif(1,0,1)
+ U6<-runif(1,0,1)
+  if (U6<0.25) save3[i]=f4(U5)
+  else if (U6<0.5) save3[i]=f5(U5)
+  else save3[i]=f6(U5)
+ }
+hist(save3,probability = T,breaks = 1000)
+```
+
+
+
+
+```{r AR mothod}
+f7=function(x) {(1/4)+2*x^(3)+(5/4)*x^(4)}
+c=(7/2)
+save4=as.numeric()
+for (i in 1 :1000000){
+  U7<-runif(1,0,1)
+  U8<-runif(1,0,1)
+  if (U8<=f7(U7)/c) {save4[i]=U7}
+  save4<-save4[!is.na(save4)]
+  if (length(save4)==10000) {break}
+}
+hist(save4,probability = T,breaks = 1000)
+```
+
+
+
