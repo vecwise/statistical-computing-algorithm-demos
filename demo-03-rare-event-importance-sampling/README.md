@@ -1,39 +1,33 @@
-# Demo 03: Rare-Event Importance Sampling
+# Demo 03: Tail Estimation with Importance Sampling
 
-## 教學問題
-稀有事件（尾端事件）用直接抽樣會很不穩定，示範如何用 Importance Sampling 改善估計效率。
+## Problem
+Show how importance sampling can stabilize tail-related estimation compared with direct simulation.
 
-## 數學模型
-以 \(X\sim\text{Exp}(1)\) 的尾端事件為例，常見稀有機率為
+## Model
+The code draws from an exponential distribution and focuses on the tail region $x > 10$.
 
-\[
-p=\mathbb{P}(X>10)=e^{-10}
-\]
+- Baseline sample: $X \sim \mathrm{Exp}(1)$, then keep samples with $X > 10$.
+- Proposal sample: $X \sim \mathrm{Exp}(0.1)$, then keep samples with $X > 10$.
 
-若改由 proposal \(g(x)\) 抽樣（程式用較厚尾分配），則用權重
+A weighted estimator is formed as:
 
-\[
-w(x)=\frac{f(x)}{g(x)}
-\]
+$$
+\hat\mu_{\mathrm{IS}} = \frac{1}{n}\sum_{i=1}^n h(X_i) w(X_i),
+$$
 
-形成無偏估計：
+where $w(x) = f(x)/g(x)$ is the likelihood ratio between target and proposal tail-conditional densities (as implemented in `main.R`).
 
-\[
-\hat\mu_{IS}=\frac{1}{n}\sum_{i=1}^n h(X_i)w(X_i),\quad X_i\sim g
-\]
+## Workflow
+1. Compute a direct tail-based estimate from $\mathrm{Exp}(1)$ samples.
+2. Sample from a heavier-tailed proposal.
+3. Apply likelihood-ratio weighting.
+4. Compare summary statistics and histogram shape.
 
-## 解題流程
-1. 直接抽樣基準估計（naive）。
-2. 用更常抽到尾端的 proposal 抽樣。
-3. 套用 likelihood ratio 權重修正偏差。
-4. 比較估計值與波動（`sd`、直方圖）。
-
-## 結果與圖表
-
+## Results
 ![Preview](preview.png)
 
-- `main.R` 會輸出加權估計、標準差與 histogram。
-- 你可以直接對照 naive 與 IS 的穩定度差異。
+- `main.R` prints weighted estimate, standard deviation, and a histogram.
+- You can compare stability between direct and IS-based estimation.
 
-## 如何重現
-- 腳本：`main.R`
+## Reproduce
+- Script: `main.R`

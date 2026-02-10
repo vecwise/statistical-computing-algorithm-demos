@@ -1,33 +1,51 @@
 # Demo 06: Random Variate Generation Methods
 
-## 教學問題
-對多個目標分配，實作三大隨機變數產生法並比較效果：
-Inverse Transform、Acceptance-Rejection、Composition。
+## Problem
+Implement and compare three major random-generation techniques:
+- Inverse transform
+- Acceptance-rejection (AR)
+- Composition (mixture sampling)
 
-## 數學模型
-本 demo 主要示範下列目標密度/分配：
+## Model
+The demo covers three target constructions used in the scripts/reports.
 
-1. \(F(x)=\tfrac12(x+x^2),\ 0\le x\le1\)（可反函數抽樣）
-2. \(f(x)=e^{-x}+2e^{-2x}-3e^{-3x}\)（適合 AR）
-3. \(f(x)=\tfrac14+2x^3+\tfrac54x^4,\ 0\le x\le1\)（可 AR 或 mixture/composition）
+1. Distribution on $[0,1]$ with CDF:
 
-## 解題流程
-1. 反函數法：令 \(U\sim U(0,1)\)，取 \(X=F^{-1}(U)\)。
-2. AR 法：找 proposal \(g\) 與常數 \(M\)，用
+$$
+F(x) = \frac{1}{2}(x + x^2), \quad 0 \le x \le 1.
+$$
 
-\[
-\text{accept if } U\le \frac{f(Y)}{Mg(Y)},\ Y\sim g
-\]
+2. Density used for AR experiment:
 
-3. Composition 法：先依 mixture 權重抽成分，再抽條件樣本。
+$$
+f(x) = e^{-x} + 2e^{-2x} - 3e^{-3x}.
+$$
 
-## 結果與圖表
+3. Density on $[0,1]$:
 
+$$
+f(x) = \frac{1}{4} + 2x^3 + \frac{5}{4}x^4.
+$$
+
+Generic AR acceptance rule:
+
+$$
+\text{accept } Y \text{ if } U \le \frac{f(Y)}{M g(Y)},
+\quad Y \sim g,\ U \sim \mathrm{Unif}(0,1).
+$$
+
+## Workflow
+1. Use inverse transform where closed-form inverse is available.
+2. Use AR with a simple proposal and acceptance test.
+3. Use composition by first selecting mixture component, then sampling conditional on that component.
+4. Compare histograms against target shape.
+
+## Results
 ![Preview](preview.png)
 
-- `main.R` 與 `report.Rmd` 會產生多組 histogram，比對是否貼近目標分配。
-- 可直接觀察不同方法的效率與實作複雜度。
+- `main.R` and `report.Rmd` generate histograms for each method/problem.
+- You can compare implementation complexity and sampling efficiency.
 
-## 如何重現
-- 腳本：`main.R`
-- 補充報告：`report.Rmd`
+## Reproduce
+- Script: `main.R`
+- Source report: `report.Rmd`

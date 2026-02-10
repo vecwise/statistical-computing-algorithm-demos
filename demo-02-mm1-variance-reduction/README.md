@@ -1,39 +1,45 @@
-# Demo 02: Variance Reduction in M/M/1 Queue
+# Demo 02: Variance Reduction in an M/M/1 Queue
 
-## 教學問題
-在同一個 M/M/1 目標量下，比較不同變異縮減技巧，觀察同樣樣本數下誰最穩定。
+## Problem
+For the same queueing target, compare multiple variance-reduction methods under equal simulation budget.
 
-## 數學模型
-- 到達間隔 \(A_i \sim \text{Exp}(\lambda),\ \lambda=2\)
-- 服務時間 \(S_i \sim \text{Exp}(1)\)
-- 目標量（前 10 位顧客總逗留時間）：
+## Model
+- Interarrival times: $A_i \sim \mathrm{Exp}(\lambda)$ with $\lambda = 2$.
+- Service times: $S_i \sim \mathrm{Exp}(\mu)$ with $\mu = 1$.
+- Target statistic in code:
 
-\[
-\theta = \mathbb{E}\left[\sum_{i=1}^{10} T_i\right]
-\]
+$$
+\theta = \mathbb{E}\!\left[\sum_{i=1}^{10} T_i\right],
+$$
 
-- 條件期望關係（報告使用）：
+where $T_i$ is the system time of customer $i$.
 
-\[
-\mathbb{E}[T_i\mid N_i]=(N_i+1)\,\mathbb{E}[S]=(N_i+1)
-\]
+The report also uses:
 
-## 解題流程
-1. 先以 naive Monte Carlo 當基準變異 \(\mathrm{Var}_{\text{naive}}\)。
-2. 依序實作 antithetic、兩種 control variate、以及條件期望法。
-3. 用變異比比較：
+$$
+\mathbb{E}[T_i \mid N_i] = \frac{N_i + 1}{\mu} = N_i + 1,
+$$
 
-\[
-\text{Variance Ratio}=\frac{\mathrm{Var}(\hat\theta_{\text{method}})}{\mathrm{Var}_{\text{naive}}}
-\]
+with $N_i$ the number of customers ahead in queue for customer $i$.
 
-## 結果與圖表
+## Workflow
+1. Build a naive Monte Carlo baseline.
+2. Implement antithetic variables.
+3. Implement two control-variates.
+4. Implement conditional-expectation estimator $\sum_i \mathbb{E}[T_i\mid N_i]$.
+5. Compare by variance ratio:
 
+$$
+\text{Variance Ratio} =
+\frac{\mathrm{Var}(\hat\theta_{\text{method}})}{\mathrm{Var}(\hat\theta_{\text{naive}})}.
+$$
+
+## Results
 ![Preview](preview.png)
 
-- 報告總結：四種方法約可降低約 75% 估計變異。
-- 比較圖與數值請看：`report.html`
+- In the provided run, all four methods reduce variance substantially (around 75% vs naive).
+- See `report.html` for numeric comparison.
 
-## 如何重現
-- 原始報告：`report.Rmd`
-- 成品報告：`report.html`
+## Reproduce
+- Source report: `report.Rmd`
+- Rendered report: `report.html`
