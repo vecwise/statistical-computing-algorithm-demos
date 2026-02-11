@@ -35,7 +35,9 @@ $$
 $$
 
 ## Results
-![Preview](preview.png)
+<p align="center">
+  <img src="preview.png" alt="Preview" width="70%" />
+</p>
 
 - In the provided run, all four methods reduce variance substantially (around 75% vs naive).
 - See `report.html` for numeric comparison.

@@ -30,7 +30,9 @@ $$
 3. Check output plots and empirical covariance.
 
 ## Results
-![Preview](preview.png)
+<p align="center">
+  <img src="preview.png" alt="Preview" width="70%" />
+</p>
 
 - NHPP event-time plot and copula simulation outputs are in `report.html`.
 - A quick executable version is in `main.R`.

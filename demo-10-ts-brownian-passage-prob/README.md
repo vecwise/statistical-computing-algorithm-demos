@@ -31,7 +31,9 @@ $$
 3. Examine how finer discretization changes the crossing estimate.
 
 ## Results
-![Preview](preview.png)
+<p align="center">
+  <img src="preview.png" alt="Preview" width="70%" />
+</p>
 
 - Path plots and probability estimates are shown in `report.html`.
 - You can directly compare coarse-grid and fine-grid estimates.

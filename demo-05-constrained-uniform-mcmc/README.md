@@ -19,7 +19,9 @@ $$
 5. Record rejection count (`failtimes`) and iterate.
 
 ## Results
-![Preview](preview.png)
+<p align="center">
+  <img src="preview.png" alt="Preview" width="70%" />
+</p>
 
 - Output includes one feasible sample and average rejection count.
 - Full run details are in `report.html`.

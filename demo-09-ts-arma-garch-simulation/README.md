@@ -26,7 +26,9 @@ $$
 4. Fit GARCH(1,1) and produce forecasts.
 
 ## Results
-![Preview](preview.png)
+<p align="center">
+  <img src="preview.png" alt="Preview" width="70%" />
+</p>
 
 - Simulation path, diagnostics, and fitted outputs are in `report.html`.
 - The output illustrates volatility clustering and conditional variance dynamics.

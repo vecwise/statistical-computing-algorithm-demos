@@ -38,7 +38,9 @@ $$
 $$
 
 ## Results
-![Preview](preview.png)
+<p align="center">
+  <img src="preview.png" alt="Preview" width="70%" />
+</p>
 
 - Main outputs include posterior contour/scatter and predictive histograms.
 - Credible/predictive intervals are computed in the script.

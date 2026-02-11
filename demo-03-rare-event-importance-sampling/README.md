@@ -24,7 +24,9 @@ where $w(x) = f(x)/g(x)$ is the likelihood ratio between target and proposal tai
 4. Compare summary statistics and histogram shape.
 
 ## Results
-![Preview](preview.png)
+<p align="center">
+  <img src="preview.png" alt="Preview" width="70%" />
+</p>
 
 - `main.R` prints weighted estimate, standard deviation, and a histogram.
 - You can compare stability between direct and IS-based estimation.

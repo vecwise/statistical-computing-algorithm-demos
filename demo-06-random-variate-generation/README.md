@@ -41,7 +41,9 @@ $$
 4. Compare histograms against target shape.
 
 ## Results
-![Preview](preview.png)
+<p align="center">
+  <img src="preview.png" alt="Preview" width="70%" />
+</p>
 
 - `main.R` and `report.Rmd` generate histograms for each method/problem.
 - You can compare implementation complexity and sampling efficiency.

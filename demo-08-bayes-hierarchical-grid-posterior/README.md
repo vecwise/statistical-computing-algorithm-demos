@@ -25,7 +25,9 @@ A second hierarchical construction evaluates a grid posterior over hyperparamete
 4. Visualize marginal/joint posterior and shrinkage-related summaries.
 
 ## Results
-![Preview](preview.png)
+<p align="center">
+  <img src="preview.png" alt="Preview" width="70%" />
+</p>
 
 - Posterior raster/contour plots and parameter-summary plots are in `report.html`.
 - The demo highlights pooling and shrinkage effects.

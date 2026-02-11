@@ -29,7 +29,9 @@ $$
 4. Bootstrap-resample $\{W_i\}$ to estimate uncertainty.
 
 ## Results
-![Preview](preview.png)
+<p align="center">
+  <img src="preview.png" alt="Preview" width="70%" />
+</p>
 
 - Main outputs: $\hat\theta$ and bootstrap variance (often used as an MSE proxy).
 - Full details are in `report.html`.
