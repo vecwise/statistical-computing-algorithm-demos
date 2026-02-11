@@ -22,7 +22,7 @@ Estimator:
 
 $$
 \hat p_m(c) = \frac{1}{N}\sum_{j=1}^N
-\mathbf{1}\!\left\{\min_k W_{k/m}^{(j)} < c\right\}.
+\mathbf{1}\{\min_{1 \le k \le m} W_{k/m}^{(j)} < c\}.
 $$
 
 ## Workflow
