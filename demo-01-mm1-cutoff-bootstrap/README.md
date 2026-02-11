@@ -19,7 +19,7 @@ Bootstrap variance estimate of $\hat\theta$:
 
 $$
 \widehat{\mathrm{Var}}(\hat{\theta})
-= \mathrm{Var}\!\left(\hat{\theta}_1^{*}, \ldots, \hat{\theta}_B^{*}\right).
+= \mathrm{Var}(\hat{\theta}^{(1)}, \ldots, \hat{\theta}^{(B)}).
 $$
 
 ## Workflow
