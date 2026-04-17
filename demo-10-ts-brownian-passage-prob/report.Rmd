@@ -25,8 +25,14 @@ BMsimu(10000,100,-3)
 BMsimu(10000,10000,-3)
 ```
 
-If I divide [0,1] into only 1 part, P(min(W(t))<-3) = 0.00134, and once dividing it into 100 parts, I get P nearly =  0.25.
+For standard Brownian motion on $[0,1]$, the reflection principle gives
 
-Hence, from 1 to 100 to 10000 to continuous, P(min(W(t))<-3) will become larger and more approximately to real probability.
+$$
+\Pr\!\left(\min_{0 \le t \le 1} W(t) < -3\right)
+= \Pr\!\left(\max_{0 \le t \le 1} W(t) > 3\right)
+= 2\{1-\Phi(3)\} \approx 0.0027.
+$$
+
+So a one-step discretization underestimates the crossing probability, and finer grids should increase the Monte Carlo estimate toward about $0.0027$, not toward a value as large as $0.25$.
 
 

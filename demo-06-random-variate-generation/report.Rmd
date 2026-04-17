@@ -23,7 +23,7 @@ hist(dist1,probability = T,breaks = 1000)
 
 ```{r AR}
 save1=as.numeric()
-for (i in 1 :100000000){
+for (i in 1:200000){
   U1<-runif(1,0,1)
   U2<-runif(1,0,1)
   Y1=(1/3)+(2/3)*U1
@@ -51,21 +51,22 @@ hist(save2,probability = T,breaks = 1000)
 ## Qeustion 2
 
 ```{r}
-fun1 <- function(x) exp(-0.01*x)
+fun1 <- function(x) dexp(x, rate = 1)
 fun2 <- function(x) exp(-x)+2*exp(-2*x)-3*exp(-3*x)
-curve(f1, from = -10, to = 20)
-curve(f2, from = -10, to = 20 ,add=T,col='red')
+curve(fun1, from = 0, to = 8)
+curve(fun2, from = 0, to = 8, add = TRUE, col = 'red')
 ```
 
 
 
 
 ```{r AR}
+M <- 4 / 3
 save5=as.numeric()
-for (i in 1:n){
+for (i in 1:500000){
   U9<-runif(1)
-  U10<-runif(1)
-  if (U9<=fun2(U10)/fun1(U10)) {save5[i]=U10}
+  Y<-rexp(1, rate = 1)
+  if (U9<=fun2(Y)/(M * fun1(Y))) {save5[i]=Y}
   save5<-save5[!is.na(save5)]
   if (length(save5)==100000) {break}
 }
@@ -89,7 +90,7 @@ for(i in 1:100000){
  U5<-runif(1,0,1)
  U6<-runif(1,0,1)
   if (U6<0.25) save3[i]=f4(U5)
-  else if (U6<0.5) save3[i]=f5(U5)
+  else if (U6<0.75) save3[i]=f5(U5)
   else save3[i]=f6(U5)
  }
 hist(save3,probability = T,breaks = 1000)
@@ -102,7 +103,7 @@ hist(save3,probability = T,breaks = 1000)
 f7=function(x) {(1/4)+2*x^(3)+(5/4)*x^(4)}
 c=(7/2)
 save4=as.numeric()
-for (i in 1 :1000000){
+for (i in 1:40000){
   U7<-runif(1,0,1)
   U8<-runif(1,0,1)
   if (U8<=f7(U7)/c) {save4[i]=U7}

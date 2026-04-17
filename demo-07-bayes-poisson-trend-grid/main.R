@@ -14,7 +14,8 @@ UB = qgamma(0.975,shape = n+alpha,rate = sum(y^2)+beta)
 
 poster.mean = (n+alpha)/(sum(y^2)+beta)
 poster.var = (n+alpha)/(sum(y^2)+beta)^2
-poster.table = matrix(c(poster.mean,poster.var,"(0.192, 0.478)"))
+poster.ci = sprintf("(%.3f, %.3f)", LB, UB)
+poster.table = matrix(c(poster.mean,poster.var,poster.ci))
 rownames(poster.table) = c("Post.mean", "Post.var", "95% CI")
 colnames(poster.table) = "Value"
 poster.table
@@ -98,8 +99,7 @@ y.predict = as.numeric()
 for (i in 1:1000) {y.predict[i] = rpois(1,lambda = dpredict[i])}
 
 #Confidence Interval
-y.info.table = c(sort(y.predict) %>% .[25],
-                 sort(y.predict) %>% .[975]) 
+y.info.table = quantile(y.predict, probs = c(0.025, 0.975), names = FALSE)
 y.info.table = data.frame(y.info.table,row.names = c("95%_LCI", "95%_UCI"))
 colnames(y.info.table) = "Value"
 #plot

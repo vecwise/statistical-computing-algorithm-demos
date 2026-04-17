@@ -2,13 +2,13 @@
   #a.Inverse Method ####################
 n = 10000
 U = runif(n)
-dist1 = -1+sqrt(8*U+1)/2
+dist1 = (-1 + sqrt(8 * U + 1)) / 2
 hist(dist1,probability = T)
 
   #b.Rejection Method ####################
 n = 10000
 X=as.numeric()
-for (i in 1 : n){
+for (i in 1:(2 * n)){
   U1 = runif(1)
   U2 = runif(1)
   Y1 = (1/3)+(2/3)*U1
@@ -40,13 +40,14 @@ hist(X,probability = T)
 
 
   #b. Acceptance Rejection Method ####################
-fun1 = function(x) exp(-0.01*x)
+fun1 = function(x) dexp(x, rate = 1)
 fun2 = function(x) exp(-x)+2*exp(-2*x)-3*exp(-3*x)
+M = 4 / 3
 X = as.numeric()
-for (i in 1 : n){
+for (i in 1:(2 * n)){
   U1 = runif(1)
-  U2 = runif(1)
-  if (U1<=fun2(U2)/fun1(U2)) {X[i]=U2}
+  Y = rexp(1, rate = 1)
+  if (U1 <= fun2(Y) / (M * fun1(Y))) {X[i]=Y}
   X = X[!is.na(X)]
   if (length(X)==n) {break}
 }
@@ -58,7 +59,7 @@ curve(fun2,add=T,col='blue')
   #a.Acceptance Rejection Method ####################
 f = function(x) {(1/4)+2*x^(3)+(5/4)*x^(4)}
 X=as.numeric()
-for (i in 1:n){
+for (i in 1:(4 * n)){
   U1<-runif(1)
   U2<-runif(1)
   if (U2<=f(U1)/3.5) {X[i]=U1}
